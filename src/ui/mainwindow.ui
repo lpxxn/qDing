@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry"><rect><x>0</x><y>0</y><width>1040</width><height>740</height></rect></property>
+  <property name="windowTitle"><string>qDing</string></property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="shellLayout">
+    <property name="spacing"><number>0</number></property>
+    <property name="leftMargin"><number>0</number></property>
+    <property name="topMargin"><number>0</number></property>
+    <property name="rightMargin"><number>0</number></property>
+    <property name="bottomMargin"><number>0</number></property>
+    <item>
+     <widget class="QWidget" name="sidebar">
+      <property name="minimumSize"><size><width>190</width><height>0</height></size></property>
+      <property name="maximumSize"><size><width>210</width><height>16777215</height></size></property>
+      <layout class="QVBoxLayout" name="sidebarLayout">
+       <property name="leftMargin"><number>12</number></property>
+       <property name="topMargin"><number>28</number></property>
+       <property name="rightMargin"><number>12</number></property>
+       <item><widget class="QLabel" name="brand"><property name="text"><string>  qDing</string></property></widget></item>
+       <item><widget class="QLabel" name="tagline"><property name="text"><string>    专注当下 · 按时提醒</string></property></widget></item>
+       <item><widget class="QListWidget" name="navigation"><property name="frameShape"><enum>QFrame::NoFrame</enum></property></widget></item>
+       <item><widget class="QLabel" name="quietBadge"><property name="text"><string>  提醒已开启</string></property></widget></item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="content">
+      <layout class="QVBoxLayout" name="contentLayout">
+       <property name="spacing"><number>12</number></property>
+       <property name="leftMargin"><number>28</number></property>
+       <property name="topMargin"><number>28</number></property>
+       <property name="rightMargin"><number>28</number></property>
+       <property name="bottomMargin"><number>20</number></property>
+       <item><widget class="QLabel" name="heading"><property name="text"><string>今日</string></property></widget></item>
+       <item><widget class="QLabel" name="subtitle"><property name="text"><string>把时间留给重要的事。</string></property></widget></item>
+       <item><widget class="QStackedWidget" name="pages"/></item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
+

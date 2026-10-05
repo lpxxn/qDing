@@ -1,0 +1,287 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui version="4.0">
+ <class>TodayPage</class>
+ <widget class="QWidget" name="TodayPage">
+  <layout class="QVBoxLayout" name="pageLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <property name="spacing">
+    <number>20</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="metrics">
+     <layout class="QHBoxLayout" name="metricsLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <property name="spacing">
+       <number>12</number>
+      </property>
+      <item>
+       <widget class="QFrame" name="nextCard">
+        <property name="role" stdset="0">
+         <string>card</string>
+        </property>
+        <layout class="QVBoxLayout" name="nextLayout">
+         <property name="leftMargin">
+          <number>20</number>
+         </property>
+         <property name="topMargin">
+          <number>20</number>
+         </property>
+         <property name="rightMargin">
+          <number>20</number>
+         </property>
+         <property name="bottomMargin">
+          <number>20</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="nextCaption">
+           <property name="text">
+            <string>下一次提醒</string>
+           </property>
+           <property name="role" stdset="0">
+            <string>muted</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="nextValue">
+           <property name="text">
+            <string>—</string>
+           </property>
+           <property name="role" stdset="0">
+            <string>heading</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="countCard">
+        <property name="role" stdset="0">
+         <string>card</string>
+        </property>
+        <layout class="QVBoxLayout" name="countLayout">
+         <property name="leftMargin">
+          <number>20</number>
+         </property>
+         <property name="topMargin">
+          <number>20</number>
+         </property>
+         <property name="rightMargin">
+          <number>20</number>
+         </property>
+         <property name="bottomMargin">
+          <number>20</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="countCaption">
+           <property name="text">
+            <string>已开启提醒</string>
+           </property>
+           <property name="role" stdset="0">
+            <string>muted</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="countValue">
+           <property name="text">
+            <string>—</string>
+           </property>
+           <property name="role" stdset="0">
+            <string>heading</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="roundsCard">
+        <property name="role" stdset="0">
+         <string>card</string>
+        </property>
+        <layout class="QVBoxLayout" name="roundsLayout">
+         <property name="leftMargin">
+          <number>20</number>
+         </property>
+         <property name="topMargin">
+          <number>20</number>
+         </property>
+         <property name="rightMargin">
+          <number>20</number>
+         </property>
+         <property name="bottomMargin">
+          <number>20</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="roundsCaption">
+           <property name="text">
+            <string>完成专注轮数</string>
+           </property>
+           <property name="role" stdset="0">
+            <string>muted</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="roundsValue">
+           <property name="text">
+            <string>—</string>
+           </property>
+           <property name="role" stdset="0">
+            <string>heading</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="welcomeCard">
+     <property name="role" stdset="0">
+      <string>card</string>
+     </property>
+     <layout class="QVBoxLayout" name="welcomeLayout">
+      <property name="leftMargin">
+       <number>28</number>
+      </property>
+      <property name="topMargin">
+       <number>28</number>
+      </property>
+      <property name="rightMargin">
+       <number>28</number>
+      </property>
+      <property name="bottomMargin">
+       <number>28</number>
+      </property>
+      <property name="spacing">
+       <number>18</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="welcomeTitle">
+        <property name="text">
+         <string>小小提醒，照顾好自己。</string>
+        </property>
+        <property name="role" stdset="0">
+         <string>heading</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="welcomeText">
+        <property name="text">
+         <string>喝水、活动、休息，或专注完成一件事。
+关闭窗口后，qDing 会在托盘里继续为你计时。</string>
+        </property>
+        <property name="role" stdset="0">
+         <string>muted</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="welcomeButtons">
+        <layout class="QHBoxLayout" name="welcomeButtonsLayout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="addReminder">
+           <property name="text">
+            <string>＋ 新建提醒</string>
+           </property>
+           <property name="primary" stdset="0">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="startFocus">
+           <property name="text">
+            <string>开始专注</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="spacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QLabel" name="footer">
+     <property name="text">
+      <string>本地保存 · 自定义声音与图片 · 支持周一至周五提醒</string>
+     </property>
+     <property name="role" stdset="0">
+      <string>muted</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources />
+ <connections />
+</ui>

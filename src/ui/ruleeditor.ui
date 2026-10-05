@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui version="4.0">
+ <class>RuleEditor</class>
+ <widget class="QFrame" name="RuleEditor">
+  <property name="role" stdset="0">
+   <string>card</string>
+  </property>
+  <layout class="QVBoxLayout" name="ruleLayout">
+   <property name="leftMargin">
+    <number>12</number>
+   </property>
+   <property name="topMargin">
+    <number>12</number>
+   </property>
+   <property name="rightMargin">
+    <number>12</number>
+   </property>
+   <property name="bottomMargin">
+    <number>12</number>
+   </property>
+   <property name="spacing">
+    <number>12</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="timeRow">
+     <layout class="QHBoxLayout" name="timeRowLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <property name="spacing">
+       <number>12</number>
+      </property>
+      <item>
+       <widget class="QComboBox" name="kind">
+        <item>
+         <property name="text">
+          <string>每天</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>周一至周五</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>自选星期</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>仅一次</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTimeEdit" name="timeEdit">
+        <property name="displayFormat">
+         <string>HH:mm</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDateTimeEdit" name="onceEdit">
+        <property name="displayFormat">
+         <string>yyyy-MM-dd HH:mm</string>
+        </property>
+        <property name="calendarPopup">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="removeRule">
+        <property name="text">
+         <string>移除</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="daysWidget">
+     <layout class="QHBoxLayout" name="daysWidgetLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <property name="spacing">
+       <number>12</number>
+      </property>
+      <item>
+       <widget class="QCheckBox" name="day0">
+        <property name="text">
+         <string>一</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="day1">
+        <property name="text">
+         <string>二</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="day2">
+        <property name="text">
+         <string>三</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="day3">
+        <property name="text">
+         <string>四</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="day4">
+        <property name="text">
+         <string>五</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="day5">
+        <property name="text">
+         <string>六</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="day6">
+        <property name="text">
+         <string>日</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources />
+ <connections />
+</ui>

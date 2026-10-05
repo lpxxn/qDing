@@ -1,0 +1,8 @@
+build/
+build-*/
+CMakeUserPresets.json
+.DS_Store
+*.user
+*.sqlite*
+*.log
+
