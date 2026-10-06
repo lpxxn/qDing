@@ -1,0 +1,10 @@
+<RCC>
+ <qresource prefix="/qding/icons">
+  <file alias="chevron-down-light.svg">../assets/icons/chevron-down-light.svg</file>
+  <file alias="chevron-up-light.svg">../assets/icons/chevron-up-light.svg</file>
+  <file alias="chevron-down-dark.svg">../assets/icons/chevron-down-dark.svg</file>
+  <file alias="chevron-up-dark.svg">../assets/icons/chevron-up-dark.svg</file>
+  <file alias="chevron-down-disabled.svg">../assets/icons/chevron-down-disabled.svg</file>
+  <file alias="chevron-up-disabled.svg">../assets/icons/chevron-up-disabled.svg</file>
+ </qresource>
+</RCC>

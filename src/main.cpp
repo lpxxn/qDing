@@ -8,7 +8,9 @@
 #include "ui/mainwindow.h"
 #include "ui/popup.h"
 #include "ui/remindereditor.h"
+#include <QAbstractItemView>
 #include <QApplication>
+#include <QComboBox>
 #include <QCommandLineParser>
 #include <QCryptographicHash>
 #include <QDir>
@@ -16,7 +18,6 @@
 #include <QLocalSocket>
 #include <QLockFile>
 #include <QMessageBox>
-#include <QPainter>
 #include <QSettings>
 #include <QStandardPaths>
 #include <QStyleFactory>
@@ -28,22 +29,10 @@
 namespace {
 QIcon applicationIcon() {
     QIcon icon;
-    for (int size : {16, 22, 32, 64, 128, 256}) {
-        QPixmap image(size, size);
-        image.fill(Qt::transparent);
-        QPainter p(&image);
-        p.setRenderHint(QPainter::Antialiasing);
-        p.scale(size / 64.0, size / 64.0);
-        p.setPen(Qt::NoPen);
-        p.setBrush(QColor("#e36d57"));
-        p.drawRoundedRect(QRectF(4, 4, 56, 56), 16, 16);
-        p.setPen(QPen(Qt::white, 4, Qt::SolidLine, Qt::RoundCap));
-        p.drawEllipse(QRectF(16, 17, 32, 32));
-        p.drawLine(32, 24, 32, 33);
-        p.drawLine(32, 33, 40, 38);
-        p.end();
-        icon.addPixmap(image);
-    }
+    // 标准尺寸有预渲染 PNG，避免细小图标随 SVG 插件加载时机变化。
+    for (int size : {16, 32, 48, 64, 128, 256})
+        icon.addFile(QStringLiteral(":/branding/qding-%1.png").arg(size), QSize(size, size));
+    icon.addFile(QStringLiteral(":/branding/qding.svg"));
     return icon;
 }
 } // namespace
@@ -183,10 +172,25 @@ int main(int argc, char **argv) {
                         window.capturePages(screenshots);
                         theme.apply(QStringLiteral("dark"));
                         window.capturePages(screenshots + QStringLiteral("/dark"));
+                        for (const auto &mode : {QStringLiteral("light"), QStringLiteral("dark")}) {
+                            theme.apply(mode);
+                            const auto directory = mode == QLatin1String("light")
+                                                       ? screenshots
+                                                       : screenshots + QStringLiteral("/dark");
+                            qding::ReminderEditor editor(sample, &storage, &media, &window);
+                            editor.show();
+                            editor.grab().save(directory + QStringLiteral("/editor.png"));
+                            auto *combo = editor.findChild<QComboBox *>(QStringLiteral("kind"));
+                            combo->parentWidget()->grab().save(
+                                directory + QStringLiteral("/rule-controls.png"));
+                            combo->showPopup();
+                            combo->view()->window()->grab().save(
+                                directory + QStringLiteral("/rule-options.png"));
+                            combo->hidePopup();
+                            combo->setCurrentIndex(3);
+                            editor.grab().save(directory + QStringLiteral("/editor-once.png"));
+                        }
                         theme.apply(QStringLiteral("light"));
-                        qding::ReminderEditor editor(sample, &storage, &media, &window);
-                        editor.show();
-                        editor.grab().save(screenshots + QStringLiteral("/editor.png"));
                         qding::Occurrence occurrence;
                         occurrence.id = QStringLiteral("preview:test");
                         occurrence.title = sample.title;

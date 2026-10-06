@@ -1,8 +1,8 @@
 build/
 build-*/
+dist/
 CMakeUserPresets.json
 .DS_Store
 *.user
 *.sqlite*
 *.log
-

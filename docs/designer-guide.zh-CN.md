@@ -40,4 +40,10 @@ pomodoropage.ui 中的 countdownRing 是从 QWidget 提升为 qding::CountdownRi
 
 role 和 primary 是 Designer 中的动态属性：role=heading/muted/card/brand 决定对应外观，primary=true 表示强调按钮。主题颜色来自 ThemeManager，QSS 集中维护，避免在每个 `.ui` 中复制颜色。运行时才设置动态属性的控件必要时要重新 polish。
 
+下拉框、数字框与时间框仍是 Designer 的标准控件。`ThemeManager` 集中设置圆角、边距、焦点与按钮区域；`controls.qrc` 打包深浅主题的 SVG 折线箭头，禁用或达到数值边界时显示淡色箭头。Qt SVG 模块负责加载这些资源。
+
+`ui/controlstyle.cpp` 使用 `QProxyStyle` 将下拉框统一为列表，并通过 `QStyledItemDelegate` 绘制圆角选项、柔和高亮和当前值勾选标记。delegate 读取应用调色板，切换主题或强调色立即生效；它不改变控件的键盘、鼠标与数值逻辑。新增标准 QComboBox/QSpinBox/QTimeEdit 会自动使用这套样式，无需逐页复制代码。
+
 建议分别预览浅色、深色、不同字号和 DPI。测试截图命令见 README；源码修改后先重新构建，截图不会自动反映未编译的 `.ui`。
+
+截图目录中的 `rule-options.png` 显示展开的下拉选项，`editor-once.png` 显示带日历按钮的日期时间输入框；`dark/` 目录提供对应深色主题预览。

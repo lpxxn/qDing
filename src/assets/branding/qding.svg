@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1024 1024" width="1024" height="1024">
+ <defs>
+  <linearGradient id="tile" x1="0" y1="0" x2="0.8" y2="1">
+   <stop stop-color="#FFAB8D"/>
+   <stop offset="0.45" stop-color="#F18067"/>
+   <stop offset="1" stop-color="#D65C52"/>
+  </linearGradient>
+  <linearGradient id="ivory" x1="0" y1="0" x2="0.2" y2="1">
+   <stop stop-color="#FFFFFF"/>
+   <stop offset="1" stop-color="#FFEDE1"/>
+  </linearGradient>
+  <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+   <stop stop-color="#FFD4BD" stop-opacity="0.8"/>
+   <stop offset="0.5" stop-color="#FFB094" stop-opacity="0.1"/>
+   <stop offset="1" stop-color="#AA3C3A" stop-opacity="0.35"/>
+  </linearGradient>
+  <path id="bell" d="M354 598C374 572 382 550 382 510V450C382 367 438 306 512 306C586 306 642 367 642 450V510C642 550 650 572 670 598L691 626C703 643 692 668 670 668H354C332 668 321 643 333 626Z"/>
+ </defs>
+ <!-- 透明画布和留白使图标符合 macOS Dock 的圆角图标比例。无需 SVG filter。 -->
+ <rect x="90" y="108" width="844" height="844" rx="200" fill="#71392F" opacity="0.06"/>
+ <rect x="86" y="96" width="852" height="848" rx="202" fill="#71392F" opacity="0.08"/>
+ <rect x="84" y="76" width="856" height="856" rx="204" fill="url(#tile)"/>
+ <rect x="88" y="80" width="848" height="848" rx="200" fill="none" stroke="url(#rim)" stroke-width="8"/>
+ <!-- 钟面嵌入铃铛，将定时与提醒两个含义合为一个轮廓。 -->
+ <g transform="translate(0 16)" fill="#A3443B" opacity="0.14">
+  <use xlink:href="#bell"/>
+  <rect x="493" y="264" width="38" height="62" rx="19"/>
+  <path d="M469 695H555C552 723 537 740 512 740C487 740 472 723 469 695Z"/>
+ </g>
+ <rect x="493" y="264" width="38" height="62" rx="19" fill="url(#ivory)"/>
+ <use xlink:href="#bell" fill="url(#ivory)"/>
+ <path d="M469 695H555C552 723 537 740 512 740C487 740 472 723 469 695Z" fill="url(#ivory)"/>
+ <circle cx="512" cy="479" r="91" fill="none" stroke="#E77761" stroke-width="16"/>
+ <path d="M512 429V479L550 502" fill="none" stroke="#DE6C59" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+ <circle cx="512" cy="479" r="10" fill="#DE6C59"/>
+ <!-- 一颗暖金色星光：提醒到来，保持细节简洁，不加入文字。 -->
+ <path d="M719 239C725 262 729 269 751 276C729 283 725 290 719 313C713 290 709 283 687 276C709 269 713 262 719 239Z" fill="#FFE4AC"/>
+</svg>

@@ -414,7 +414,13 @@ void MainWindow::updatePomodoro(PomodoroSnapshot s) {
     }
 }
 void MainWindow::createTray() {
-    tray_ = new QSystemTrayIcon(qApp->windowIcon(), this);
+    auto trayIcon = qApp->windowIcon();
+#ifdef Q_OS_MACOS
+    // macOS 菜单栏使用模板图标，由系统自动适配深色、浅色和选中状态。
+    trayIcon = QIcon(QStringLiteral(":/branding/tray.svg"));
+    trayIcon.setIsMask(true);
+#endif
+    tray_ = new QSystemTrayIcon(trayIcon, this);
     auto *menu = new QMenu(this);
     menu->addAction(QStringLiteral("打开 qDing"), this, &MainWindow::showAndRaise);
     menu->addAction(QStringLiteral("新建提醒"), this, [this] {

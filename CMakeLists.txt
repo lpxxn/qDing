@@ -8,7 +8,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui Widgets Sql Multimedia Network)
+find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui Widgets Sql Multimedia Network Svg)
 find_package(spdlog CONFIG QUIET)
 if(NOT spdlog_FOUND)
     include(FetchContent)
@@ -61,8 +61,9 @@ add_library(qding_ui
     src/ui/popup.h src/ui/popup.cpp
     src/ui/mainwindow.h src/ui/mainwindow.cpp
     src/ui/countdownring.h src/ui/countdownring.cpp
+    src/ui/controlstyle.h src/ui/controlstyle.cpp src/ui/controls.qrc
     src/platform/integration.h ${platform_sources})
-target_link_libraries(qding_ui PUBLIC qding_storage Qt6::Widgets Qt6::Multimedia Qt6::Network)
+target_link_libraries(qding_ui PUBLIC qding_storage Qt6::Widgets Qt6::Multimedia Qt6::Network Qt6::Svg)
 if(APPLE)
     target_link_libraries(qding_ui PRIVATE "-framework AppKit" "-framework ServiceManagement")
 elseif(WIN32)
@@ -70,16 +71,35 @@ elseif(WIN32)
 endif()
 
 qt_add_executable(qDing WIN32 MACOSX_BUNDLE src/main.cpp)
+target_sources(qDing PRIVATE src/assets/branding.qrc)
 target_link_libraries(qDing PRIVATE qding_ui)
+if(APPLE)
+    target_sources(qDing PRIVATE src/assets/branding/qding.icns)
+    set_source_files_properties(src/assets/branding/qding.icns PROPERTIES
+        MACOSX_PACKAGE_LOCATION Resources)
+    set_target_properties(qDing PROPERTIES MACOSX_BUNDLE_ICON_FILE qding.icns)
+elseif(WIN32)
+    enable_language(RC)
+    target_sources(qDing PRIVATE src/platform/windows.rc)
+    target_include_directories(qDing PRIVATE src/assets/branding)
+endif()
+
+# 修改图标时才显式构建/运行此工具；应用构建与发布不依赖它。
+add_executable(qding_icon_generator EXCLUDE_FROM_ALL tools/generate-icons.cpp)
+target_link_libraries(qding_icon_generator PRIVATE Qt6::Gui Qt6::Svg)
 set_target_properties(qDing PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER "com.lpxxn.qding"
     MACOSX_BUNDLE_BUNDLE_NAME "qDing"
     MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
     MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}")
 
-foreach(target qding_core qding_storage qding_ui qDing)
+foreach(target qding_core qding_storage qding_ui qDing qding_icon_generator)
     if(MSVC)
-        target_compile_options(${target} PRIVATE /W4 /permissive- /utf-8)
+        # rc.exe 不接受 C++ 编译器参数；Windows 原生图标资源使用独立的 RC 语言。
+        target_compile_options(${target} PRIVATE
+            $<$<COMPILE_LANGUAGE:CXX>:/W4>
+            $<$<COMPILE_LANGUAGE:CXX>:/permissive->
+            $<$<COMPILE_LANGUAGE:CXX>:/utf-8>)
     else()
         target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic)
     endif()
@@ -107,7 +127,7 @@ if(APPLE)
     # 本应用只用 SQLite；显式选择插件，并让工具追踪每个插件的动态库依赖。
     list(APPEND qding_deploy_options -no-plugins)
     foreach(plugin QCocoaIntegrationPlugin QOffscreenIntegrationPlugin QSQLiteDriverPlugin
-            QGifPlugin QJpegPlugin QDarwinMediaPlugin QFFmpegMediaPlugin)
+            QGifPlugin QJpegPlugin QSvgPlugin QSvgIconPlugin QDarwinMediaPlugin QFFmpegMediaPlugin)
         if(TARGET Qt6::${plugin})
             get_target_property(plugin_type Qt6::${plugin} QT_PLUGIN_TYPE)
             set(plugin_destination "qDing.app/Contents/PlugIns/${plugin_type}")

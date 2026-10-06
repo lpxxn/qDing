@@ -1,0 +1,12 @@
+<RCC>
+ <qresource prefix="/branding">
+  <file alias="qding.svg">branding/qding.svg</file>
+  <file alias="tray.svg">branding/tray.svg</file>
+  <file alias="qding-16.png">branding/qding-16.png</file>
+  <file alias="qding-32.png">branding/qding-32.png</file>
+  <file alias="qding-48.png">branding/qding-48.png</file>
+  <file alias="qding-64.png">branding/qding-64.png</file>
+  <file alias="qding-128.png">branding/qding-128.png</file>
+  <file alias="qding-256.png">branding/qding-256.png</file>
+ </qresource>
+</RCC>

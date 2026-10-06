@@ -17,20 +17,21 @@ jobs:
       - uses: jurplel/install-qt-action@v4
         with:
           version: '6.8.3'
-          modules: 'qtmultimedia'
+          modules: 'qtmultimedia qtsvg'
           cache: true
       - uses: ilammy/msvc-dev-cmd@v1
         if: runner.os == 'Windows'
-      - name: Configure
-        run: cmake --preset debug
-      - name: Build
-        run: cmake --build --preset debug --parallel 4
-      - name: Test
-        run: ctest --preset debug
-      - name: Deploy
-        run: cmake --install build/debug --prefix build/package
+      - name: Package macOS release
+        if: runner.os == 'macOS'
+        shell: bash
+        run: bash scripts/package-macos.sh --qt "$QT_ROOT_DIR" --jobs 4
+      - name: Package Windows release
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/package-windows.ps1 -QtRoot "$env:QT_ROOT_DIR" -Jobs 4
       - uses: actions/upload-artifact@v4
         with:
           name: qDing-${{ runner.os }}
-          path: build/package/
-
+          path: dist/*
+          if-no-files-found: error
+          compression-level: 0

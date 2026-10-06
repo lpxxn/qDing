@@ -1,0 +1,3 @@
+// Embed the application icon in the executable. CMake provides the icon include path.
+#define IDI_QDING 1
+IDI_QDING ICON "qding.ico"

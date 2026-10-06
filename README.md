@@ -18,7 +18,7 @@ Windows 登录启动使用当前用户启动项；macOS 使用 SMAppService，�
 
 ## 环境与构建
 
-需要 CMake 3.24+、Ninja、C++20 工具链及 Qt 6.8+，安装 Qt Multimedia 模块。macOS 使用 Xcode/Apple Clang，Windows 使用与 Qt SDK 匹配的 MSVC 2022 x64 工具链。spdlog 1.15.3 优先查找本地安装，否则 CMake 从固定 tag 获取，首次构建需网络。
+需要 CMake 3.24+、Ninja、C++20 工具链及 Qt 6.8+，安装 Qt Multimedia 和 Qt SVG 模块。macOS 使用 Xcode/Apple Clang，Windows 使用与 Qt SDK 匹配的 MSVC 2022 x64 工具链。spdlog 1.15.3 优先查找本地安装，否则 CMake 从固定 tag 获取，首次构建需网络。
 
 macOS 示例（将 Qt 路径换成自己的安装位置）：
 
@@ -75,6 +75,22 @@ cmake --install build/debug --prefix build/package
 
 CLI 还支持 `--background`、`--data-dir <目录>`、`--help`、`--version`。不同数据目录有独立单实例锁。GitHub Actions 配置 macOS 与 Windows 的 Qt 6.8.3 构建、测试与部署；推送后才会实际运行，仓库内的 workflow 不表示 Windows 已在本机验证。
 
+### 一键打包 Release
+
+macOS：
+
+```sh
+./scripts/package-macos.sh --qt "$HOME/Qt/6.12.0/macos"
+```
+
+Windows PowerShell（使用 MSVC 版本 Qt；脚本自动加载 Visual Studio C++ 环境）：
+
+```powershell
+.\scripts\package-windows.ps1 -QtRoot "C:\Qt\6.8.3\msvc2022_64"
+```
+
+两者默认构建 Release、运行测试、部署 Qt 依赖并独立检查部署后的程序。输出在 `dist/`：macOS 为 DMG、ZIP 和 SHA-256；Windows 为便携 ZIP 和 SHA-256。版本号读取 CMake，不需要在脚本里同步修改。macOS 默认使用临时签名，可选 Developer ID 签名与 Apple 公证；Windows 可选 Authenticode 签名。参数、输出结构及签名示例见[构建与发布文档](docs/building.zh-CN.md#一键发布脚本)。
+
 ## 学习入口
 
 - [实现与选型方案](docs/implementation-plan.zh-CN.md)：完整设计与后续路线。
@@ -82,5 +98,6 @@ CLI 还支持 `--background`、`--data-dir <目录>`、`--help`、`--version`。
 - [Designer 页面修改](docs/designer-guide.zh-CN.md)：9 个 `.ui` 与自定义控件提升。
 - [存储与调度](docs/storage-scheduling.zh-CN.md)：事务、去重、补提醒与崩溃边界。
 - [构建与发布](docs/building.zh-CN.md)：两平台工具链、测试、部署、日志排查。
+- [应用图标](src/assets/branding/README.md)：矢量源文件、原生 ICNS/ICO 与素材生成方法。
 
 当前工作区已在 macOS arm64 / Qt 6.12.0 上编译、测试和检查 UI。Windows 原生电源/登录启动适配已编写，Windows 实机与 CI 验证需在相应环境运行。发布给其他用户前，检查 Qt 与 spdlog 许可证、macOS 签名/公证及 Windows 安装卸载流程。
