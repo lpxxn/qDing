@@ -38,6 +38,9 @@ void ThemeManager::apply(const QString &mode, const QColor &accent) {
     palette.setColor(QPalette::Base, theme_.surface);
     palette.setColor(QPalette::AlternateBase, theme_.background);
     palette.setColor(QPalette::Text, theme_.text);
+    // 局部 Designer QSS 用 palette(mid/placeholder-text) 读取主题边框与次要文字。
+    palette.setColor(QPalette::Mid, theme_.border);
+    palette.setColor(QPalette::PlaceholderText, theme_.muted);
     palette.setColor(QPalette::Button, theme_.surface);
     palette.setColor(QPalette::ButtonText, theme_.text);
     palette.setColor(QPalette::Highlight, theme_.accent);

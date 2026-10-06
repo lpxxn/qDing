@@ -220,6 +220,12 @@ int main(int argc, char **argv) {
                         QTimer::singleShot(950, &window, [&, screenshots, celebration] {
                             celebration->grab().save(screenshots +
                                                      QStringLiteral("/celebration.png"));
+                            theme.apply(QStringLiteral("dark"));
+                            celebration->grab().save(screenshots +
+                                                     QStringLiteral("/dark/celebration.png"));
+                            theme.apply(QStringLiteral("light"), QColor("#2b9d86"));
+                            celebration->grab().save(screenshots +
+                                                     QStringLiteral("/celebration-teal.png"));
                             celebration->dismissWithoutAction();
                             window.requestExit();
                         });

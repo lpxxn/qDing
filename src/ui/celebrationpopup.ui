@@ -4,29 +4,30 @@
  <widget class="QWidget" name="CelebrationPopup">
   <property name="windowTitle"><string>qDing 提醒</string></property>
   <property name="styleSheet"><string notr="true">
+/* 颜色取自应用调色板，Designer 布局不变；切换主题时无需重新创建弹窗。 */
 QWidget#CelebrationPopup { background: transparent; }
-QFrame#celebrationCard { background: #171d2e; border: 1px solid #3c425a; border-radius: 24px; }
+QFrame#celebrationCard { background: palette(base); border: 1px solid palette(mid); border-radius: 24px; }
 QWidget#headerWidget, QWidget#detailsWidget, QWidget#actionButtons { background: transparent; }
-QLabel { background: transparent; color: #f5f2ef; }
-QLabel#brandLabel { color: #e7bb99; font-size: 13px; font-weight: 600; }
+QLabel { background: transparent; color: palette(text); }
+QLabel#brandLabel { color: palette(highlight); font-size: 13px; font-weight: 600; }
 QLabel#titleLabel { font-size: 27px; font-weight: 700; }
-QLabel#timeLabel, QLabel#snoozeLabel { color: #a3aec9; font-size: 12px; }
+QLabel#timeLabel, QLabel#snoozeLabel { color: palette(placeholder-text); font-size: 12px; }
 QScrollArea#contentScroll { border: none; background: transparent; }
-QTextEdit#bodyLabel { background: transparent; color: #c5cee2; border: none; padding: 0; font-size: 15px; }
-QPushButton { background: #252d43; color: #e4e9f6; border: 1px solid #3a4561; border-radius: 10px; padding: 11px 16px; }
-QPushButton:hover { background: #303b54; border-color: #8c99b8; }
-QPushButton:pressed { background: #1e263b; }
-QPushButton#completeButton { background: #ef9679; border-color: #ef9679; color: #291f25; font-weight: 700; }
-QPushButton#completeButton:hover { background: #ffac8e; border-color: #ffac8e; }
-QPushButton:disabled, QPushButton#completeButton:disabled { background: #282e42; border-color: #343c51; color: #68748f; }
-QPushButton#closeButton { background: transparent; border: none; padding: 0; border-radius: 16px; font-size: 23px; color: #abb6d0; }
-QPushButton#closeButton:hover { background: #30394f; color: #ffffff; }
-QPushButton#silenceButton { background: transparent; border: none; color: #a3aec9; font-size: 12px; padding: 3px; }
-QComboBox { background: #252d43; color: #e4e9f6; border: 1px solid #3a4561; border-radius: 8px; }
-QComboBox:focus, QComboBox:on { border-color: #ef9679; }
+QTextEdit#bodyLabel { background: transparent; color: palette(text); border: none; padding: 0; font-size: 15px; }
+QPushButton { background: palette(base); color: palette(text); border: 1px solid palette(mid); border-radius: 10px; padding: 11px 16px; }
+QPushButton:hover { background: palette(alternate-base); border-color: palette(highlight); }
+QPushButton:pressed { background: palette(mid); }
+QPushButton#completeButton { background: palette(highlight); border-color: palette(highlight); color: palette(highlighted-text); font-weight: 700; }
+QPushButton#completeButton:hover { background: palette(highlight); border-color: palette(text); }
+QPushButton:disabled, QPushButton#completeButton:disabled { background: palette(alternate-base); border-color: palette(mid); color: palette(placeholder-text); }
+QPushButton#closeButton { background: transparent; border: none; padding: 0; border-radius: 16px; font-size: 23px; color: palette(placeholder-text); }
+QPushButton#closeButton:hover { background: palette(alternate-base); color: palette(text); }
+QPushButton#silenceButton { background: transparent; border: none; color: palette(placeholder-text); font-size: 12px; padding: 3px; }
+QComboBox { background: palette(base); color: palette(text); border: 1px solid palette(mid); border-radius: 8px; }
+QComboBox:focus, QComboBox:on { border-color: palette(highlight); }
 QScrollBar:vertical { background: transparent; border: none; width: 6px; margin: 0; }
-QScrollBar::handle:vertical { background: #4b5671; border-radius: 3px; min-height: 24px; }
-QScrollBar::handle:vertical:hover { background: #7784a1; }
+QScrollBar::handle:vertical { background: palette(mid); border-radius: 3px; min-height: 24px; }
+QScrollBar::handle:vertical:hover { background: palette(placeholder-text); }
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; border: none; background: transparent; }
 QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: transparent; }
   </string></property>

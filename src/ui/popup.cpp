@@ -35,10 +35,10 @@
 namespace qding {
 ReminderPopup::ReminderPopup(Occurrence occurrence, MediaService *media,
                              PopupPresentation presentation, QWidget *parent)
-    : QWidget(parent,
-              (presentation.style == PopupStyle::Celebration ? Qt::Tool | Qt::FramelessWindowHint
-                                                             : Qt::Window) |
-                  Qt::WindowStaysOnTopHint),
+    : QWidget(parent, (presentation.style == PopupStyle::Celebration
+                           ? Qt::Tool | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint
+                           : Qt::Window) |
+                          Qt::WindowStaysOnTopHint),
       occurrence_(std::move(occurrence)), presentation_(presentation) {
     setWindowTitle(QStringLiteral("qDing · ") + occurrence_.title);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -68,16 +68,11 @@ ReminderPopup::ReminderPopup(Occurrence occurrence, MediaService *media,
 #endif
         Ui::CelebrationPopup form;
         bind(form);
-        // 浮层有自身夜色配色；用户正文与图片仍走相同的纯文本/本地媒体路径。
-        auto palette = this->palette();
-        palette.setColor(QPalette::Window, QColor("#171d2e"));
-        palette.setColor(QPalette::Base, QColor("#171d2e"));
-        palette.setColor(QPalette::Text, QColor("#c5cee2"));
-        setPalette(palette);
+        // 只绘制卡片的一层阴影；系统阴影会包住透明留白，形成第二圈窗口轮廓。
         auto *shadow = new QGraphicsDropShadowEffect(form.celebrationCard);
-        shadow->setBlurRadius(30);
-        shadow->setOffset(0, 6);
-        shadow->setColor(QColor(0, 0, 0, 100));
+        shadow->setBlurRadius(24);
+        shadow->setOffset(0, 4);
+        shadow->setColor(QColor(0, 0, 0, 65));
         form.celebrationCard->setGraphicsEffect(shadow);
         form.fireworks->setAnimationEnabled(presentation.animations);
         form.detailsLayout->setAlignment(Qt::AlignTop);

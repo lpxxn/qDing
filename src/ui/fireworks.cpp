@@ -1,4 +1,6 @@
 #include "ui/fireworks.h"
+#include <QApplication>
+#include <QEvent>
 #include <QHideEvent>
 #include <QPainter>
 #include <QPainterPath>
@@ -8,6 +10,13 @@
 #include <numbers>
 
 namespace qding {
+namespace {
+QColor mix(const QColor &base, const QColor &tint, qreal amount) {
+    return QColor::fromRgbF(base.redF() * (1 - amount) + tint.redF() * amount,
+                            base.greenF() * (1 - amount) + tint.greenF() * amount,
+                            base.blueF() * (1 - amount) + tint.blueF() * amount);
+}
+} // namespace
 FireworksWidget::FireworksWidget(QWidget *parent) : QWidget(parent) {
     setAttribute(Qt::WA_TransparentForMouseEvents);
     timer_.setInterval(16);
@@ -46,22 +55,31 @@ void FireworksWidget::hideEvent(QHideEvent *event) {
     seconds_ = 0;
     QWidget::hideEvent(event);
 }
+void FireworksWidget::changeEvent(QEvent *event) {
+    QWidget::changeEvent(event);
+    if (event->type() == QEvent::PaletteChange || event->type() == QEvent::ApplicationPaletteChange)
+        update(); // 静态状态也跟随主题，不必重新启动动画。
+}
 void FireworksWidget::paintEvent(QPaintEvent *) {
+    const auto palette = QApplication::palette();
+    const QColor surface = palette.color(QPalette::Base);
+    const QColor accent = palette.color(QPalette::Highlight);
+    const bool dark = surface.lightnessF() < 0.5;
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     QPainterPath clip;
     clip.addRoundedRect(QRectF(rect()), 16, 16);
     painter.setClipPath(clip);
     QLinearGradient background(0, 0, width(), height());
-    background.setColorAt(0, QColor("#262b48"));
-    background.setColorAt(0.55, QColor("#20263e"));
-    background.setColorAt(1, QColor("#382f4a"));
+    background.setColorAt(0, mix(surface, accent, dark ? 0.16 : 0.09));
+    background.setColorAt(0.55, mix(surface, accent, dark ? 0.08 : 0.04));
+    background.setColorAt(1, mix(surface, QColor("#9271d0"), dark ? 0.24 : 0.12));
     painter.fillRect(rect(), background);
     // 可重现的星光背景，无随机全局状态，也无需外部素材或着色器。
     for (int i = 0; i < 30; ++i) {
         const QPointF point(((i * 73 + 19) % 997) / 997.0 * width(),
                             ((i * 131 + 53) % 991) / 991.0 * height());
-        QColor star("#e2deff");
+        QColor star = palette.color(QPalette::PlaceholderText);
         star.setAlphaF(0.2 + 0.12 * (1 + std::sin(seconds_ * 2 + i)));
         painter.setPen(Qt::NoPen);
         painter.setBrush(star);
@@ -70,14 +88,17 @@ void FireworksWidget::paintEvent(QPaintEvent *) {
     // 轻柔的中心光晕与钟面，关闭动画时仍有完整的静态装饰。
     const QPointF center(width() * 0.5, height() * 0.57);
     QRadialGradient halo(center, 78);
-    halo.setColorAt(0, QColor(255, 184, 145, 42));
-    halo.setColorAt(1, QColor(255, 184, 145, 0));
+    QColor glow = accent;
+    glow.setAlpha(42);
+    halo.setColorAt(0, glow);
+    glow.setAlpha(0);
+    halo.setColorAt(1, glow);
     painter.setBrush(halo);
     painter.drawEllipse(center, 78, 78);
-    painter.setBrush(QColor("#fff0df"));
+    painter.setBrush(dark ? QColor("#fff0df") : surface);
     painter.drawEllipse(center, 25, 25);
     painter.setBrush(Qt::NoBrush);
-    painter.setPen(QPen(QColor("#e7856a"), 2.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter.setPen(QPen(accent, 2.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     painter.drawEllipse(center, 16, 16);
     painter.drawLine(center + QPointF(0, -9), center);
     painter.drawLine(center, center + QPointF(8, 5));
@@ -86,9 +107,14 @@ void FireworksWidget::paintEvent(QPaintEvent *) {
     const std::array<QPointF, 5> origins{QPointF(0.19, 0.32), QPointF(0.78, 0.3),
                                          QPointF(0.47, 0.24), QPointF(0.3, 0.45),
                                          QPointF(0.85, 0.48)};
-    const std::array<QColor, 5> colors{QColor("#ffd392"), QColor("#b7afff"), QColor("#ffa18a"),
-                                       QColor("#93e4dc"), QColor("#ffc7a1")};
-    painter.setCompositionMode(QPainter::CompositionMode_Screen);
+    const std::array<QColor, 5> colors =
+        dark ? std::array<QColor, 5>{QColor("#ffd392"), QColor("#b7afff"), accent,
+                                     QColor("#93e4dc"), QColor("#ffc7a1")}
+             : std::array<QColor, 5>{QColor("#b88024"), QColor("#8861c4"), accent,
+                                     QColor("#2b9d86"), QColor("#d96b51")};
+    // 深色背景叠加光线；浅色背景用正常混合，避免烟花被漂白。
+    painter.setCompositionMode(dark ? QPainter::CompositionMode_Screen
+                                    : QPainter::CompositionMode_SourceOver);
     for (int burst = 0; burst < 5; ++burst) {
         const qreal age = seconds_ - (0.3 + burst * 0.46);
         const QPointF origin(origins[burst].x() * width(), origins[burst].y() * height());

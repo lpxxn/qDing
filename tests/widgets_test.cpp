@@ -14,6 +14,8 @@
 #include <QCursor>
 #include <QDialogButtonBox>
 #include <QFile>
+#include <QFrame>
+#include <QImage>
 #include <QLineEdit>
 #include <QMovie>
 #include <QPushButton>
@@ -235,6 +237,48 @@ private slots:
                  QStringLiteral("celebration"));
         QVERIFY(restored.value(QStringLiteral("popup/center")).toBool());
         QVERIFY(!restored.value(QStringLiteral("popup/animations")).toBool());
+    }
+    void celebrationFollowsLiveThemeAndKeepsTransparentCorners() {
+        QTemporaryDir temp;
+        MediaService media(temp.path());
+        ThemeManager theme;
+        theme.apply(QStringLiteral("light"));
+        Occurrence occurrence;
+        occurrence.title = QStringLiteral("主题预览");
+        occurrence.body = QStringLiteral("主题与强调色应立即更新");
+        ReminderPopup popup(occurrence, &media, {PopupStyle::Celebration, true, false});
+        popup.setAttribute(Qt::WA_DeleteOnClose, false);
+        popup.show();
+        QVERIFY(popup.windowFlags().testFlag(Qt::NoDropShadowWindowHint));
+        QVERIFY(popup.testAttribute(Qt::WA_TranslucentBackground));
+        auto *card = popup.findChild<QFrame *>(QStringLiteral("celebrationCard"));
+        auto *hero = popup.findChild<FireworksWidget *>();
+        auto *complete = popup.findChild<QPushButton *>(QStringLiteral("completeButton"));
+        QVERIFY(card && hero && complete);
+        const auto pixel = [&](QWidget *widget, QPoint point) {
+            const QImage image = widget->grab().toImage();
+            return image.pixelColor(qRound(point.x() * image.devicePixelRatio()),
+                                    qRound(point.y() * image.devicePixelRatio()));
+        };
+        // 检查最终绘制结果，而不是仅比较 QSS 字符串；同一个已打开窗口也必须更新。
+        for (const auto &mode :
+             {QStringLiteral("light"), QStringLiteral("dark"), QStringLiteral("light")}) {
+            for (const auto &accent : {QColor("#e36d57"), QColor("#2b9d86")}) {
+                theme.apply(mode, accent);
+                QCoreApplication::processEvents();
+                QCOMPARE(pixel(&popup, card->mapTo(&popup, QPoint(12, 80))), theme.theme().surface);
+                QCOMPARE(pixel(complete, QPoint(complete->width() / 2, 8)), accent);
+                QCOMPARE(popup.findChild<QTextEdit *>(QStringLiteral("bodyLabel"))
+                             ->palette()
+                             .color(QPalette::Text),
+                         theme.theme().text);
+                const QColor sky = pixel(hero, QPoint(12, hero->height() / 2));
+                QCOMPARE(sky.lightnessF() < 0.5, mode == QLatin1String("dark"));
+                QCOMPARE(pixel(&popup, QPoint(0, 0)).alpha(), 0);
+                QVERIFY(!hero->isAnimating()); // 换肤不应重播已关闭的动画。
+            }
+        }
+        popup.dismissWithoutAction();
     }
     void fireworksStopWhenPopupIsHidden() {
         QTemporaryDir temp;
