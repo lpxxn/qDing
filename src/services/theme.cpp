@@ -56,7 +56,7 @@ void ThemeManager::apply(const QString &mode, const QColor &accent) {
         QLabel[role="muted"] { color: %4; }
         QLabel[role="brand"] { font-size: 24px; font-weight: 700; color: %6; }
         QFrame[role="card"] { background: %2; border: 1px solid %5; border-radius: 12px; }
-        QListWidget#navigation { background: %2; border: none; padding: 10px; }
+        QListWidget#navigation { background: %2; border: none; padding: 10px; outline: none; }
         QListWidget#navigation::item { padding: 13px 16px; border-radius: 8px; margin: 3px 0; }
         QListWidget#navigation::item:selected { background: %6; color: white; }
         QListView#reminderList { background: %2; border: 1px solid %5; border-radius: 12px; outline: none; }
