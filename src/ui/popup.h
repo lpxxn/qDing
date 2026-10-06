@@ -10,13 +10,23 @@ class QSoundEffect;
 class QMediaPlayer;
 class QAudioOutput;
 class QTimer;
+class QShowEvent;
+class QHideEvent;
+class QMouseEvent;
 
 namespace qding {
 class MediaService;
+enum class PopupStyle { Classic, Celebration };
+struct PopupPresentation {
+    PopupStyle style = PopupStyle::Classic;
+    bool centered = false;
+    bool animations = true;
+};
 class ReminderPopup final : public QWidget {
     Q_OBJECT
 public:
-    ReminderPopup(Occurrence occurrence, MediaService *media);
+    ReminderPopup(Occurrence occurrence, MediaService *media, PopupPresentation presentation = {},
+                  QWidget *parent = nullptr);
     void dismissWithoutAction();
     void retry();
     const Occurrence &occurrence() const { return occurrence_; }
@@ -26,12 +36,17 @@ signals:
 
 protected:
     void closeEvent(QCloseEvent *event) override;
+    void showEvent(QShowEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     void request(const QString &status, int snooze = 0);
     Occurrence occurrence_;
     QList<QPushButton *> actions_;
     bool closing_ = false, waiting_ = false;
+    PopupPresentation presentation_;
+    bool presented_ = false;
 };
 
 class NotificationCoordinator final : public QObject {
@@ -46,6 +61,8 @@ public:
     void setQuiet(bool quiet);
     void setMuted(bool muted);
     void setGlobalVolume(int volume);
+    void setPresentation(PopupPresentation presentation) { presentation_ = presentation; }
+    PopupPresentation presentation() const { return presentation_; }
     void stopSound();
     void retry();
 signals:
@@ -65,5 +82,6 @@ private:
     bool quiet_ = false, muted_ = false;
     bool soundActive_ = false;
     int globalVolume_ = 100;
+    PopupPresentation presentation_;
 };
 } // namespace qding

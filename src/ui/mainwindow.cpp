@@ -288,6 +288,48 @@ QWidget *MainWindow::createSettings() {
     };
     connect(mode, &QComboBox::currentIndexChanged, this, apply);
     connect(accent, &QComboBox::currentIndexChanged, this, apply);
+    auto *popupStyle = form.popupStyle;
+    popupStyle->setItemData(0, QStringLiteral("classic"));
+    popupStyle->setItemData(1, QStringLiteral("celebration"));
+    popupStyle->setCurrentIndex(
+        qMax(0, popupStyle->findData(
+                    settings_->value(QStringLiteral("popup/style"), QStringLiteral("classic")))));
+    auto *centerPopup = form.centerPopup;
+    auto *popupAnimations = form.popupAnimations;
+    centerPopup->setChecked(settings_->value(QStringLiteral("popup/center"), false).toBool());
+    popupAnimations->setChecked(
+        settings_->value(QStringLiteral("popup/animations"), true).toBool());
+    auto applyPopup = [this, popupStyle, centerPopup, popupAnimations] {
+        const bool modern = popupStyle->currentData() == QLatin1String("celebration");
+        popupAnimations->setEnabled(modern);
+        settings_->setValue(QStringLiteral("popup/style"), popupStyle->currentData());
+        settings_->setValue(QStringLiteral("popup/center"), centerPopup->isChecked());
+        settings_->setValue(QStringLiteral("popup/animations"), popupAnimations->isChecked());
+        notifications_->setPresentation({modern ? PopupStyle::Celebration : PopupStyle::Classic,
+                                         centerPopup->isChecked(), popupAnimations->isChecked()});
+    };
+    applyPopup();
+    connect(popupStyle, &QComboBox::currentIndexChanged, this, applyPopup);
+    connect(centerPopup, &QCheckBox::toggled, this, applyPopup);
+    connect(popupAnimations, &QCheckBox::toggled, this, applyPopup);
+    connect(form.previewPopup, &QPushButton::clicked, this, [this] {
+        if (popupPreview_)
+            popupPreview_->dismissWithoutAction();
+        Occurrence sample;
+        sample.id = QStringLiteral("preview:") + newId();
+        sample.title = QStringLiteral("给自己一个小小的休息");
+        sample.body =
+            QStringLiteral("喝一杯水，伸个懒腰，看看远处。\n把时间留给重要的事，也留一点给自己。");
+        sample.scheduledAt = QDateTime::currentDateTimeUtc();
+        // 用户主动请求的样式预览独立于勿扰/提醒队列；不播放声音、不写触发历史。
+        auto *preview = new ReminderPopup(sample, media_, notifications_->presentation(), this);
+        popupPreview_ = preview;
+        connect(
+            preview, &ReminderPopup::action, preview,
+            [preview](const QString &, const QString &, int) { preview->dismissWithoutAction(); });
+        preview->show();
+        spdlog::info("popup presentation preview");
+    });
     form.startInTray->setChecked(
         settings_->value(QStringLiteral("behavior/startInTray"), false).toBool());
     connect(form.startInTray, &QCheckBox::toggled, this, [this](bool value) {

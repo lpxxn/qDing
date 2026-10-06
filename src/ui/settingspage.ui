@@ -125,6 +125,23 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="popupGroup">
+         <property name="title"><string>提醒窗口</string></property>
+         <layout class="QFormLayout" name="popupSettingsLayout">
+          <property name="leftMargin"><number>16</number></property><property name="rightMargin"><number>16</number></property><property name="topMargin"><number>16</number></property><property name="bottomMargin"><number>16</number></property><property name="spacing"><number>12</number></property>
+          <item row="0" column="0"><widget class="QLabel" name="popupStyleLabel"><property name="text"><string>样式</string></property></widget></item>
+          <item row="0" column="1"><widget class="QComboBox" name="popupStyle">
+           <item><property name="text"><string>经典窗口（现有样式）</string></property></item>
+           <item><property name="text"><string>星光烟花（无边框卡片）</string></property></item>
+          </widget></item>
+          <item row="1" column="0" colspan="2"><widget class="QCheckBox" name="centerPopup"><property name="text"><string>在当前屏幕中央显示提醒</string></property></widget></item>
+          <item row="2" column="0" colspan="2"><widget class="QCheckBox" name="popupAnimations"><property name="text"><string>开启烟花与入场动画</string></property></widget></item>
+          <item row="3" column="0" colspan="2"><widget class="QPushButton" name="previewPopup"><property name="text"><string>预览当前样式（无声音）</string></property></widget></item>
+          <item row="4" column="0" colspan="2"><widget class="QLabel" name="popupHint"><property name="text"><string>设置用于下一次提醒。不居中时显示在屏幕右下角。</string></property><property name="wordWrap"><bool>true</bool></property><property name="role" stdset="0"><string>muted</string></property></widget></item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="behavior">
          <property name="title">
           <string>运行与提醒</string>

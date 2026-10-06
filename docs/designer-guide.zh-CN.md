@@ -13,6 +13,7 @@
 | src/ui/remindereditor.ui | 新建/编辑提醒 | ReminderEditor |
 | src/ui/ruleeditor.ui | 一条时间规则 | RuleEditor |
 | src/ui/reminderpopup.ui | 到期弹窗 | ReminderPopup |
+| src/ui/celebrationpopup.ui | 无边框星光烟花卡片 | ReminderPopup |
 
 Qt Creator 打开 CMakeLists.txt，选择正确 Kit。在项目树里双击 `.ui`，切换到“设计”模式即可拖放控件、调整布局和预览。CMake AUTOUIC 在构建目录生成 ui_*.h，源码里 include 这些生成头，然后调用 setupUi。**不要手动修改 build 里的 ui_*.h**，下一次构建会覆盖。
 
@@ -33,6 +34,8 @@ Qt Creator 打开 CMakeLists.txt，选择正确 Kit。在项目树里双击 `.ui
 pomodoropage.ui 中的 countdownRing 是从 QWidget 提升为 qding::CountdownRing 的控件，头文件为 ui/countdownring.h。Designer 不安装自定义插件时显示普通 QWidget 占位；真实程序由 C++ paintEvent 绘制圆环和文字。
 
 提升控件需要可接受 QWidget* parent 的构造函数。ThemeManager 通过 setTheme 注入，番茄钟值通过 setSnapshot 更新。Qt 已处理逻辑坐标与高 DPI，绘制代码不再手动对坐标乘设备像素比。
+
+celebrationpopup.ui 中的 fireworks 同样从 QWidget 提升为 qding::FireworksWidget，头文件为 ui/fireworks.h。Designer 中显示占位区域，运行时绘制烟花。新卡片的布局与局部 QSS 都在 `.ui`，设置入口也在 settingspage.ui；参见[弹窗样式与动画](popup-styles.zh-CN.md)。
 
 ## 外观与尺寸
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "domain/types.h"
 #include <QMainWindow>
+#include <QPointer>
 #include <QTimer>
 #include <memory>
 class QSettings;
@@ -26,6 +27,7 @@ class ReminderScheduler;
 class PlatformIntegration;
 class NotificationCoordinator;
 class ReminderListModel;
+class ReminderPopup;
 class CountdownRing;
 class MainWindow final : public QMainWindow {
     Q_OBJECT
@@ -80,6 +82,7 @@ private:
     QCheckBox *quietBox_;
     QTimer quietTimer_;
     QDateTime quietUntil_;
+    QPointer<ReminderPopup> popupPreview_;
     bool quietRequested_ = false, locked_ = false, sleeping_ = false, quitting_ = false,
          ready_ = false;
 };

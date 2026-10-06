@@ -10,14 +10,17 @@
 #include "ui/remindereditor.h"
 #include <QAbstractItemView>
 #include <QApplication>
+#include <QCheckBox>
 #include <QComboBox>
 #include <QCommandLineParser>
 #include <QCryptographicHash>
 #include <QDir>
+#include <QGroupBox>
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QLockFile>
 #include <QMessageBox>
+#include <QScrollArea>
 #include <QSettings>
 #include <QStandardPaths>
 #include <QStyleFactory>
@@ -200,6 +203,27 @@ int main(int argc, char **argv) {
                         popup.setAttribute(Qt::WA_DeleteOnClose, false);
                         popup.show();
                         popup.grab().save(screenshots + QStringLiteral("/popup.png"));
+                        window.selectPage(4);
+                        window.findChild<QComboBox *>(QStringLiteral("popupStyle"))
+                            ->setCurrentIndex(1);
+                        window.findChild<QCheckBox *>(QStringLiteral("centerPopup"))
+                            ->setChecked(true);
+                        auto *scroll =
+                            window.findChild<QScrollArea *>(QStringLiteral("scrollArea"));
+                        scroll->ensureWidgetVisible(
+                            window.findChild<QGroupBox *>(QStringLiteral("popupGroup")));
+                        window.grab().save(screenshots + QStringLiteral("/settings-popup.png"));
+                        auto *celebration = new qding::ReminderPopup(
+                            occurrence, &media, {qding::PopupStyle::Celebration, true, true},
+                            &window);
+                        celebration->show();
+                        QTimer::singleShot(950, &window, [&, screenshots, celebration] {
+                            celebration->grab().save(screenshots +
+                                                     QStringLiteral("/celebration.png"));
+                            celebration->dismissWithoutAction();
+                            window.requestExit();
+                        });
+                        return; // 让事件循环推进烟花动画，再截图并结束 smoke。
                     }
                     window.requestExit();
                 });

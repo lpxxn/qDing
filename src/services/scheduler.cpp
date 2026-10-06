@@ -12,6 +12,7 @@ ReminderScheduler::ReminderScheduler(StorageService *storage, QObject *parent)
             [this](OccurrenceList list, QDateTime at, QDateTime next) {
                 busy_ = false;
                 nextDelivery_ = next;
+                checkedAt_ = at;
                 emit checked(at);
                 if (running_)
                     emit due(list);
@@ -57,12 +58,14 @@ void ReminderScheduler::setGraceSeconds(int value) {
     wake();
 }
 QDateTime ReminderScheduler::nextReminder() const {
+    return nextAfter(QDateTime::currentDateTimeUtc());
+}
+QDateTime ReminderScheduler::nextAfter(const QDateTime &after) const {
     QDateTime closest;
-    const auto now = QDateTime::currentDateTimeUtc();
     for (const auto &r : reminders_)
         if (r.enabled)
             for (const auto &rule : r.rules) {
-                const auto at = ScheduleCalculator::next(rule, now);
+                const auto at = ScheduleCalculator::next(rule, after);
                 if (at && (!closest.isValid() || *at < closest))
                     closest = *at;
             }
@@ -79,7 +82,9 @@ void ReminderScheduler::arm() {
         return;
     const auto now = QDateTime::currentDateTimeUtc();
     qint64 wait = 30000; // 低频检查兜底检测墙上时间变化。
-    const auto next = nextReminder();
+    // 查询截至 checkedAt_；GUI 接收结果时可能已经跨过到期时刻。
+    // 仍以扫描边界找下一次计划，已到期则尽快再扫描，不能直接跳到 30 秒兜底。
+    const auto next = nextAfter(checkedAt_.isValid() ? qMin(checkedAt_, now) : now);
     if (next.isValid())
         wait = qMin(wait, now.msecsTo(next));
     if (!quiet_ && nextDelivery_.isValid())

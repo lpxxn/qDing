@@ -15,7 +15,7 @@
 ctest --preset debug 运行三个目标：
 
 - qding_core_storage：星期/边界/DST、番茄钟、数据库去重/稍后/恢复、宽限与媒体路径。
-- qding_widgets_interactions：真实 Designer 编辑器保存多规则，弹窗稍后操作与 GIF 解码，以及定时调度 → 弹窗 → 完成 → 历史落库的完整流程。
+- qding_widgets_interactions：真实 Designer 编辑器保存多规则，两种弹窗的稍后/GIF/完成落库，样式设置与预览，动画生命周期及扫描边界延迟回归。
 - qding_widgets_smoke：临时用户目录中初始化完整程序、保存示例、无声音退出。
 
 界面测试使用 offscreen 平台，不产生正常用户数据库。它能验证控件绑定，但不证明系统托盘、声音设备、休眠/锁屏与登录启动在实机上完全正常。推送后的 GitHub Actions 再执行 macOS 与 Windows SDK 基线构建。

@@ -22,10 +22,12 @@ signals:
 private:
     void scan();
     void arm();
+    QDateTime nextAfter(const QDateTime &after) const;
     StorageService *storage_;
     ReminderList reminders_;
     QTimer timer_;
     QDateTime nextDelivery_;
+    QDateTime checkedAt_;
     bool running_ = false;
     bool busy_ = false;
     bool quiet_ = false;

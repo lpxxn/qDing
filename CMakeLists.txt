@@ -53,12 +53,13 @@ endif()
 add_library(qding_ui
     src/ui/mainwindow.ui src/ui/todaypage.ui src/ui/reminderspage.ui
     src/ui/pomodoropage.ui src/ui/historypage.ui src/ui/settingspage.ui
-    src/ui/remindereditor.ui src/ui/ruleeditor.ui src/ui/reminderpopup.ui
+    src/ui/remindereditor.ui src/ui/ruleeditor.ui src/ui/reminderpopup.ui src/ui/celebrationpopup.ui
     src/services/scheduler.h src/services/scheduler.cpp
     src/services/theme.h src/services/theme.cpp
     src/ui/remindermodel.h src/ui/remindermodel.cpp
     src/ui/remindereditor.h src/ui/remindereditor.cpp
     src/ui/popup.h src/ui/popup.cpp
+    src/ui/fireworks.h src/ui/fireworks.cpp
     src/ui/mainwindow.h src/ui/mainwindow.cpp
     src/ui/countdownring.h src/ui/countdownring.cpp
     src/ui/controlstyle.h src/ui/controlstyle.cpp src/ui/controls.qrc
