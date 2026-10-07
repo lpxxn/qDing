@@ -32,15 +32,17 @@
 namespace {
 QIcon applicationIcon() {
     QIcon icon;
-    // 标准尺寸有预渲染 PNG，避免细小图标随 SVG 插件加载时机变化。
+    // 标准尺寸有预渲染 PNG，避免细小图标随 SVG/iconengines 插件加载时机变化。
     for (int size : {16, 32, 48, 64, 128, 256})
         icon.addFile(QStringLiteral(":/branding/qding-%1.png").arg(size), QSize(size, size));
+    // SVG 条目仍需要发布包带上 SVG 相关插件（见 docs/qt-plugins.zh-CN.md）。
     icon.addFile(QStringLiteral(":/branding/qding.svg"));
     return icon;
 }
 } // namespace
 
 int main(int argc, char **argv) {
+    // 此处加载 QPA 平台插件（windows/cocoa，或环境变量 QT_QPA_PLATFORM=offscreen）。
     QApplication app(argc, argv);
     QCoreApplication::setOrganizationName(QStringLiteral("lpxxn"));
     QCoreApplication::setApplicationName(QStringLiteral("qDing"));

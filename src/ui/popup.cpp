@@ -98,6 +98,7 @@ ReminderPopup::ReminderPopup(Occurrence occurrence, MediaService *media,
     image->setVisible(!path.isEmpty());
     if (!path.isEmpty()) {
         if (QFileInfo(path).suffix().compare(QStringLiteral("gif"), Qt::CaseInsensitive) == 0) {
+            // QMovie/GIF 走 imageformats 的 qgif 插件；失败则隐藏图片，文字提醒仍可用。
             auto *movie = new QMovie(path, QByteArray{}, image);
             movie->setCacheMode(QMovie::CacheNone);
             // 第一次解码前设置缩放尺寸，避免首帧按原始尺寸缓存。
@@ -232,6 +233,7 @@ void ReminderPopup::retry() {
 NotificationCoordinator::NotificationCoordinator(MediaService *media, QObject *parent)
     : QObject(parent), media_(media) {
     effect_ = new QSoundEffect(this);
+    // QMediaPlayer 依赖 multimedia 后端插件；失败时下面回退到内置 WAV（QSoundEffect）。
     player_ = new QMediaPlayer(this);
     audio_ = new QAudioOutput(this);
     player_->setAudioOutput(audio_);

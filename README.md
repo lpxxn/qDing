@@ -99,6 +99,7 @@ Windows PowerShell（使用 MSVC 版本 Qt；脚本自动加载 Visual Studio C+
 - [Designer 页面修改](docs/designer-guide.zh-CN.md)：10 个 `.ui` 与自定义控件提升。
 - [存储与调度](docs/storage-scheduling.zh-CN.md)：事务、去重、补提醒与崩溃边界。
 - [构建与发布](docs/building.zh-CN.md)：两平台工具链、测试、部署、日志排查。
+- [Qt 插件原理与用法](docs/qt-plugins.zh-CN.md)：平台/SQL/图像/多媒体插件机制、本仓库部署白名单与验证。
 - [弹窗样式与动画](docs/popup-styles.zh-CN.md)：两套表单、居中、静音预览、粒子绘制与动画生命周期。
 - [应用图标](src/assets/branding/README.md)：矢量源文件、原生 ICNS/ICO 与素材生成方法。
 

@@ -115,6 +115,7 @@ if(BUILD_TESTING)
     qt_add_executable(qding_widgets_tests tests/widgets_test.cpp)
     target_link_libraries(qding_widgets_tests PRIVATE qding_ui Qt6::Test)
     add_test(NAME qding_widgets_interactions COMMAND qding_widgets_tests)
+    # offscreen QPA：无显示器环境跑 Widgets；需要 platforms 插件中的 qoffscreen。
     set_tests_properties(qding_widgets_interactions PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen" TIMEOUT 20)
     add_test(NAME qding_widgets_smoke COMMAND qDing --smoke-test)
     set_tests_properties(qding_widgets_smoke PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen" TIMEOUT 20)
@@ -122,10 +123,28 @@ endif()
 
 include(GNUInstallDirs)
 install(TARGETS qDing BUNDLE DESTINATION . RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+# ---------------------------------------------------------------------------
+# Qt 功能插件部署（平台 / SQL / 图像 / 图标引擎 / 多媒体）
+#
+# qDing 不实现业务插件；运行时由 QApplication、QSqlDatabase、QImageReader、
+# QMediaPlayer 等按需加载 Qt 官方插件。详见 docs/qt-plugins.zh-CN.md。
+#
+# cmake --install 执行下方生成的脚本：Windows=windeployqt，macOS=macdeployqt。
+# ---------------------------------------------------------------------------
 set(qding_deploy_options "")
 if(APPLE)
-    # macdeployqt 默认拷贝整个 SQL 插件组，可能引入没有安装客户端的 Mimer 等驱动。
-    # 本应用只用 SQLite；显式选择插件，并让工具追踪每个插件的动态库依赖。
+    # macdeployqt 默认会拷贝整个 SQL 插件组（含 Mimer 等），可能再拖入本机没有的
+    # 客户端动态库。应用只使用 QSQLITE，因此：
+    #   1) -no-plugins：关闭默认整组拷贝；
+    #   2) 按白名单 install 到 Contents/PlugIns/<QT_PLUGIN_TYPE>/；
+    #   3) -executable=插件路径：让 macdeployqt 解析该插件自己的 dylib 依赖。
+    #
+    # 白名单与业务对应：
+    #   QCocoa / QOffscreen → 正常 GUI / 测试与打包 smoke（QT_QPA_PLATFORM=offscreen）
+    #   QSQLite             → storage.cpp addDatabase("QSQLITE")
+    #   Gif/Jpeg/Svg        → 提醒图与资源解码
+    #   QSvgIcon            → 托盘等 SVG 图标
+    #   Darwin/FFmpeg Media → QMediaPlayer 自定义音频
     list(APPEND qding_deploy_options -no-plugins)
     foreach(plugin QCocoaIntegrationPlugin QOffscreenIntegrationPlugin QSQLiteDriverPlugin
             QGifPlugin QJpegPlugin QSvgPlugin QSvgIconPlugin QDarwinMediaPlugin QFFmpegMediaPlugin)
@@ -137,7 +156,28 @@ if(APPLE)
                 "-executable=${plugin_destination}/$<TARGET_FILE_NAME:Qt6::${plugin}>")
         endif()
     endforeach()
+elseif(WIN32)
+    # windeployqt 按已链接模块扫描 DLL 与常用插件（含 qwindows、qsqlite、图像等）。
+    # 默认往往不带 qoffscreen；而 package-windows.ps1 的部署后检查强制
+    # QT_QPA_PLATFORM=offscreen，必须显式纳入，否则干净环境下 smoke 失败。
+    list(APPEND qding_deploy_options --include-plugins qoffscreen)
 endif()
-qt_generate_deploy_app_script(TARGET qDing OUTPUT_SCRIPT deploy_script
-    NO_UNSUPPORTED_PLATFORM_ERROR DEPLOY_TOOL_OPTIONS ${qding_deploy_options})
+if(WIN32)
+    # qt_generate_deploy_app_script 默认把 plugins/translations 放在安装前缀根；
+    # 便携包改为 prefix/bin/plugins 与 prefix/bin/translations（PLUGINS_DIR 相对前缀）。
+    qt_generate_deploy_script(
+        TARGET qDing
+        OUTPUT_SCRIPT deploy_script
+        CONTENT "
+set(QT_DEPLOY_TRANSLATIONS_DIR \"${CMAKE_INSTALL_BINDIR}/translations\")
+qt_deploy_runtime_dependencies(
+    EXECUTABLE \"\$<TARGET_FILE:qDing>\"
+    GENERATE_QT_CONF
+    PLUGINS_DIR ${CMAKE_INSTALL_BINDIR}/plugins
+    DEPLOY_TOOL_OPTIONS --include-plugins qoffscreen
+)")
+else()
+    qt_generate_deploy_app_script(TARGET qDing OUTPUT_SCRIPT deploy_script
+        NO_UNSUPPORTED_PLATFORM_ERROR DEPLOY_TOOL_OPTIONS ${qding_deploy_options})
+endif()
 install(SCRIPT ${deploy_script})

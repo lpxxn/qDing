@@ -38,8 +38,8 @@ function Initialize-Msvc {
         if ($installation) {
             $devCmd = Join-Path $installation 'Common7\Tools\VsDevCmd.bat'
             # 捕获环境后只导入进当前脚本进程，不修改系统 PATH，也不打印环境变量。
-            $command = '""{0}" -no_logo -arch={1} -host_arch=x64 >nul && set"' -f $devCmd, $Architecture
-            $environmentLines = & $env:ComSpec /d /s /c $command
+            # 不用 cmd /s + 手工拼 ""path"...：PowerShell 再传参时会把带空格的 VS 路径拆坏。
+            $environmentLines = & $env:ComSpec /d /c "`"$devCmd`" -no_logo -arch=$Architecture -host_arch=x64 >nul && set"
             if ($LASTEXITCODE -ne 0) { throw 'Could not initialize the MSVC environment.' }
             foreach ($line in $environmentLines) {
                 if ($line -match '^([^=]+)=(.*)$') {
@@ -85,7 +85,15 @@ try {
     Invoke-Native cmake @('--fresh', '-S', $root, '-B', $buildDir, '-G', 'Ninja',
         '-DCMAKE_BUILD_TYPE=Release', '-DCMAKE_CXX_COMPILER=cl.exe', "-DBUILD_TESTING=$testing", "-DCMAKE_PREFIX_PATH=$QtRoot")
     Invoke-Native cmake @('--build', $buildDir, '--parallel', "$Jobs")
-    if (-not $SkipTests) { Invoke-Native ctest @('--test-dir', $buildDir, '--output-on-failure') }
+    if (-not $SkipTests) {
+        # 构建目录里的测试未部署 Qt DLL，只在 ctest 期间从 SDK 加载。
+        $savedTestPath = $env:PATH
+        try {
+            $env:PATH = (Join-Path $QtRoot 'bin') + ';' + $env:PATH
+            Invoke-Native ctest @('--test-dir', $buildDir, '--output-on-failure')
+        }
+        finally { $env:PATH = $savedTestPath }
+    }
     $versionLine = Select-String -LiteralPath (Join-Path $buildDir 'CMakeCache.txt') -Pattern '^CMAKE_PROJECT_VERSION:STATIC=(\d+\.\d+\.\d+)$'
     if (-not $versionLine) { throw 'Cannot read project version.' }
     $version = $versionLine.Matches[0].Groups[1].Value
@@ -94,8 +102,18 @@ try {
     Invoke-Native cmake @('--install', $buildDir, '--prefix', $package, '--config', 'Release')
     $executable = Join-Path $package 'bin\qDing.exe'
     if (-not (Test-Path -LiteralPath $executable)) { throw 'Installed executable is missing.' }
+    $binPlugins = Join-Path $package 'bin\plugins\platforms'
+    if (-not (Test-Path -LiteralPath $binPlugins)) { throw 'Deployed plugins are missing under bin\plugins.' }
+    foreach ($legacy in @('plugins', 'translations')) {
+        if (Test-Path -LiteralPath (Join-Path $package $legacy)) {
+            throw "Unexpected top-level $legacy directory; plugins and translations must live under bin\."
+        }
+    }
 
-    # 让部署后的程序独立启动，避免 SDK 的 DLL/插件掩盖漏打包的文件。
+    # 部署后自洽检查（详见 docs/qt-plugins.zh-CN.md）：
+    # - 从 PATH 去掉 SDK bin，避免加载开发机 Qt6*.dll；
+    # - 清除 QT_PLUGIN_PATH / QT_QPA_PLATFORM_PLUGIN_PATH，避免 SDK plugins 掩盖漏打包；
+    # - 强制 offscreen：验证包内 platforms/qoffscreen（CMake 通过 --include-plugins 纳入）。
     $savedPath = $env:PATH
     $savedPluginPath = $env:QT_PLUGIN_PATH
     $savedPlatformPath = $env:QT_QPA_PLATFORM_PLUGIN_PATH

@@ -83,7 +83,8 @@ fi
 cmake --install "$BUILD_DIR" --prefix "$STAGE/install" --config Release
 APP="$STAGE/install/qDing.app"
 [[ -x "$APP/Contents/MacOS/qDing" ]] || fail 'Installed application is missing.'
-# 不允许开发机的 Qt 插件环境变量掩盖部署缺失；使用临时数据、无声音启动。
+# 部署后自洽检查（详见 docs/qt-plugins.zh-CN.md）：
+# 清除插件搜索环境变量，避免 SDK PlugIns 掩盖漏打包；强制 offscreen 验证包内 qoffscreen。
 env -u QT_PLUGIN_PATH -u QT_QPA_PLATFORM_PLUGIN_PATH \
     QT_QPA_PLATFORM=offscreen "$APP/Contents/MacOS/qDing" --smoke-test
 VERSION="$(awk -F= '/^CMAKE_PROJECT_VERSION:STATIC=/{print $2}' "$BUILD_DIR/CMakeCache.txt")"

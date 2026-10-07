@@ -51,6 +51,7 @@ void DatabaseWorker::initialize() {
     try {
         if (!QDir().mkpath(QFileInfo(path_).absolutePath()))
             throw std::runtime_error("Cannot create data directory");
+        // "QSQLITE" 由 sqldrivers 插件（qsqlite）实现；发布包须带上该插件，见 docs/qt-plugins.zh-CN.md。
         db_ = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), connectionName_);
         db_.setDatabaseName(path_);
         db_.setConnectOptions(QStringLiteral("QSQLITE_BUSY_TIMEOUT=3000"));

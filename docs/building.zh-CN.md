@@ -24,9 +24,11 @@ ctest --preset debug 运行三个目标：
 
 ## 部署
 
-cmake --install 使用 Qt 的部署脚本，复制动态库、平台插件和媒体依赖。macOS 显式选择 Cocoa/Offscreen、SQLite、GIF/JPEG/SVG、SVG 图标与音频插件，避免引入应用不使用的数据库驱动及其外部客户端依赖。Windows 产物位于 build/package/bin，macOS 位于 build/package/qDing.app。不要只复制开发构建的单个可执行文件给其他用户。
+cmake --install 使用 Qt 的部署脚本，复制动态库、平台插件和媒体依赖。macOS 显式选择 Cocoa/Offscreen、SQLite、GIF/JPEG/SVG、SVG 图标与音频插件，避免引入应用不使用的数据库驱动及其外部客户端依赖。Windows 由 windeployqt 扫描模块依赖，并额外纳入 `qoffscreen`（打包脚本用 offscreen 做部署后启动检查）。Windows 产物位于 build/package/bin，macOS 位于 build/package/qDing.app。不要只复制开发构建的单个可执行文件给其他用户。
 
 在没有安装 Qt 的目标机器上运行，确认 qsqlite 驱动、GIF、音频后端都可用。macOS 首次分发需要签名、公证与稳定安装位置；Windows 正式安装需要签名、启动项和卸载清理。当前 workflow 生成本地分发包，正式证书签名、公证与安装发行流程需另外配置。
+
+插件查找路径、白名单与代码触发点见 [Qt 插件原理与用法](qt-plugins.zh-CN.md)。
 
 ## 一键发布脚本
 
@@ -74,6 +76,11 @@ DMG 中包含 qDing.app、Applications 快捷入口及安装说明。ZIP 保留 
 
 ### Windows
 
+```
+$env:PATH = "C:\Qt\Tools\CMake_64\bin;C:\Qt\Tools\Ninja;$env:PATH"
+.\scripts\package-windows.ps1 -QtRoot C:\Qt\6.12.0\msvc2022_64
+```
+
 ```powershell
 .\scripts\package-windows.ps1 -QtRoot "C:\Qt\6.8.3\msvc2022_64" -Jobs 4
 Get-Help .\scripts\package-windows.ps1 -Examples
@@ -88,7 +95,7 @@ Get-Help .\scripts\package-windows.ps1 -Examples
 dist/qDing-0.1.0-Windows-x64.zip
 └── qDing-0.1.0-Windows-x64/
     ├── bin/qDing.exe
-    ├── bin/Qt6*.dll、平台/图像/数据库/音频插件与运行库
+    ├── bin/Qt6*.dll、bin/plugins/…、bin/translations/… 与运行库
     └── 运行说明.txt
 dist/qDing-0.1.0-Windows-x64.sha256
 ```

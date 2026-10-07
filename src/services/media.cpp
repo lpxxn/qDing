@@ -41,6 +41,7 @@ QString MediaService::importFile(const QString &source, bool image, QString *err
         return {};
     }
     if (image) {
+        // canRead() 依赖 imageformats 插件（gif/jpeg 等）；缺插件时导入会失败。
         QImageReader reader(source);
         const auto size = reader.size();
         if (!reader.canRead() || !size.isValid() || size.width() > 2048 || size.height() > 2048) {
